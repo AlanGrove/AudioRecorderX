@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>录音</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            font-size: 15px;
+            margin-top: -15px;
+            margin-bottom: 8px;
+            color: green
+        }
+
+        .controls {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+
+        .background-box {
+            border: 2px solid #61B2F1; 
+            padding: 30px; 
+            background-color: #f0f8f0; 
+            display: inline-block; 
+            border-radius: 50px; 
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+        }
+
+
+        button {
+            font-size: 13px;
+            font-weight: bold;
+            width: 80px;
+            height: 80px;
+            border: 3px solid #61B2F1; 
+            border-radius: 50%;		
+            background-color: #f0f0f0; 
+            color: white; 
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); 
+        }
+
+
+        #toggle {
+            background-color: #4CAF50;
+        }
+
+        #toggle.recording {
+            background-color: #f44336;
+        }
+
+        #toggle:hover {
+            transform: scale(1.1);
+        }
+
+        #downloadMP3 {
+            background-color: #FFAE00;
+        }
+
+        #downloadMP3:hover {
+            transform: scale(1.1);
+        }
+
+        #cloudLinksButton {
+            background-color: #2196F3;
+        }
+
+        #cloudLinksButton:hover {
+            transform: scale(1.1);
+        }
+
+        canvas {
+            width: 230px;
+            height: 15px;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            margin: 1px auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        #timer {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        
+        label[for="bitrate"] {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        select#bitrate {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        
+        label[for="customFilenamePart1"] {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        input#customFilenamePart1 {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        label[for="customFilenamePart2"] {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        input#customFilenamePart2 {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        label[for="savePath"] {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        select#savePath {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        label[for="startDate"] {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+
+	
+        textarea {
+            margin-left: 10px;
+            width: 290px;
+            height: 12px;
+            font-size: 12px; 
+            line-height: 1.2; 
+        }
+
+	
+        #linkInput {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+
+
+#popup-content {
+    align-items: center;
+}
+
+#close-popup {
+    align-self: flex-end;
+    cursor: pointer;
+}
+
+button1 {
+            font-weight: bold;
+            color: green; 
+}
+
+    </style>
+</head>
+<body>
+<div class="background-box">     
+    <h1>音频录制器 1.21</h1>
+
+    <p style="font-size: 23px; font-weight: bold; color: green;margin-bottom: 5px;margin-top: 1px;"><span id="timer" style="font-size: 30px;">00:00:00</span></p>
+
+<div id="popup1" style="display: none;">
+    <div id="popup-content">
+        <span id="close-popup">&times;</span>
+        <p style="font-size: 12px; font-weight: bold; color: dodgerblue;margin-bottom: 5px;margin-top: -10px;">选择复制样式:</p>
+        <button1 id="copy-plain">①.无样式</button1>
+        <button1 id="copy-color">②.仅颜色</button1>
+        <button1 id="copy-font-size">③.23px颜色</button1>
+        <button1 id="copy-bg">④.23px颜色BG</button1>
+        <button1 id="copy-full">⑤.复制整体样式</button1>
+    </div>
+</div>
+
+    <canvas id="waveform"></canvas>
+
+    
+    <div>
+        <label for="bitrate">选择比特率：</label>
+        <select id="bitrate">
+            <option value="16" selected >16 kbps</option>
+            <option value="64">64 kbps</option>
+            <option value="96">96 kbps</option>
+            <option value="128">128 kbps</option>
+            <option value="192">192 kbps</option>
+            <option value="320">320 kbps</option>
+        </select>
+    </div>
+
+    
+    <div>
+        <label for="savePath">请选择组别：</label>
+        <select id="savePath">
+            <option value="">无</option>
+            <option value="一组">一组</option>
+            <option value="二组">二组</option>
+            <option value="三组">三组</option>
+            <option value="四组">四组</option>
+            <option value="六组">六组</option>
+            <option value="七组">七组</option>
+            <option value="八组">八组</option>
+            <option value="九组">九组</option>
+            <option value=" ">————</option>
+        </select>
+    </div>
+
+    <label for="startDate">开场日期:</label>
+    <input type="date" id="startDate">
+
+    <div>
+        <!--<label for="customFilenamePart1">请输入名称：</label>-->
+        <input type="text" id="customFilenamePart1" placeholder="请输入名称">
+    </div>
+    <div>
+        <!--<label for="customFilenamePart2">请输入场次（1-100）：</label>-->
+        <input type="text" id="customFilenamePart2" placeholder="请输入场次（1-100）">
+    </div>
+
+    <div class="controls">
+        <button id="toggle">开始录音</button>	
+        <button id="downloadMP3" disabled>下载 MP3</button>
+        <button id="cloudLinksButton">打开链接</button>
+
+    </div>
+    <div>
+        <textarea id="linkInput" placeholder="输入链接，每行一个，格式为 '备注 @ 链接'...
+        备注1 @ https://drive.google.com/link1
+        备注2 @ https://drive.google.com/link2
+	"></textarea>
+    </div>
+
+    <audio id="audioPlayback" controls></audio>
+
+    <script src="AudioRecorder.js"></script>
+    <script src="lame.min.js"></script>
+</body>
+</html>
+
